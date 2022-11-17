@@ -2,9 +2,22 @@ from selenium import webdriver
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions as EC
 import time
 from datetime import datetime
+from openpyxl import Workbook, load_workbook
+from openpyxl.utils import get_column_letter
+
+
+now1 = datetime.now()
+print(now1)
+now1 = str(now1).split(' ')
+data_inicio = now1[0]
+hora_inicio = now1[1]
+hora_inicio = hora_inicio.split('.')
+hora_inicio = hora_inicio[0]
+print('DATA INICIO: '+data_inicio)
+print('HORA INICIO: '+hora_inicio)
+
 
 servico = Service(ChromeDriverManager().install())
 
@@ -42,56 +55,56 @@ while peido==True and cont<10:
 
     if cor1 == roll_black and cor2 == roll_black:
         black_to_black = black_to_black+1
-        now = datetime.now()
-        print('black_to_black: '+str(now))
+        now2 = datetime.now()
+        print('black_to_black: '+str(now2))
         time.sleep(30)
     
     elif cor1 == roll_black and cor2 == roll_white:
         black_to_white = black_to_white+1
-        now = datetime.now()
-        print('black_to_white: '+str(now))
+        now2 = datetime.now()
+        print('black_to_white: '+str(now2))
         time.sleep(30)
 
     elif cor1 == roll_black and cor2 == roll_red:
         black_to_red = black_to_red+1
-        now = datetime.now()
-        print('black_to_red: '+str(now))
+        now2 = datetime.now()
+        print('black_to_red: '+str(now2))
         time.sleep(30)
 
     elif cor1 == roll_white and cor2 == roll_white:
         white_to_white = white_to_white+1
-        now = datetime.now()
-        print('white_to_white: '+str(now))
+        now2 = datetime.now()
+        print('white_to_white: '+str(now2))
         time.sleep(30)
 
     elif cor1 == roll_white and cor2 == roll_red:
         white_to_red = white_to_red+1
-        now = datetime.now()
-        print('white_to_red: '+str(now))
+        now2 = datetime.now()
+        print('white_to_red: '+str(now2))
         time.sleep(30)
 
     elif cor1 == roll_white and cor2 == roll_black:
         white_to_black = white_to_black+1
-        now = datetime.now()
-        print('white_to_black: '+str(now))
+        now2 = datetime.now()
+        print('white_to_black: '+str(now2))
         time.sleep(30)
 
     elif cor1 == roll_red and cor2 == roll_red:
         red_to_red = red_to_red+1
-        now = datetime.now()
-        print('red_to_red: '+str(now))
+        now2 = datetime.now()
+        print('red_to_red: '+str(now2))
         time.sleep(30)
 
     elif cor1 == roll_red and cor2 == roll_white:
         red_to_white = red_to_white+1
-        now = datetime.now()
-        print('red_to_white: '+str(now))
+        now2 = datetime.now()
+        print('red_to_white: '+str(now2))
         time.sleep(30)
 
     elif cor1== roll_red and cor2 == roll_black:
         red_to_black = red_to_black+1
-        now = datetime.now()
-        print('red_to_black: '+str(now))
+        now2 = datetime.now()
+        print('red_to_black: '+str(now2))
         time.sleep(30)
 
     
@@ -105,6 +118,41 @@ print('WHITE TO BLACK: '+str(white_to_black))
 print('RED TO RED: '+str(red_to_red))
 print('RED TO BLACK: '+str(red_to_black))
 print('RED TO WHITE: '+str(red_to_white))
+
+now2 = str(now2).split(' ')
+data_final = now2[0]
+hora_final = now2[1]
+hora_final = hora_final.split('.')
+hora_final = hora_final[0]
+hora_final = hora_final.replace(":","-")
+hora_inicio = hora_inicio.replace(":","-")
+
+lista_combinações = ['BLACK TO BLACK','BLACK TO WHITE','BLACK TO RED','WHITE TO WHITE','WHITE TO RED','WHITE TO BLACK',
+    'RED TO RED','RED TO BLACK','RED TO WHITE']
+
+lista_combinacoes_resultados = [black_to_black,black_to_white,black_to_red,white_to_white,white_to_red,white_to_black,red_to_red,
+    red_to_black,red_to_white]
+
+
+wb = Workbook()
+ws1 = wb.active
+ws1.title = data_inicio+'_'+hora_inicio+'_'+hora_final
+
+for col in range(1,3):
+    if col == 1:
+        for row in range(1,10):
+            letter = get_column_letter(col)
+            ws1[letter + str(row)] = lista_combinações[row-1]
+    elif col == 2:
+        for row in range(1,10):
+            letter = get_column_letter(col)
+            ws1[letter + str(row)] = lista_combinacoes_resultados[row-1]
+
+ws2 = wb.create_sheet(title="Ok")
+ws2["C1"] = "OK"
+
+
+wb.save('Relatorio_Robo_'+data_inicio+'_'+hora_inicio+'_'+hora_final+'.xlsx')
         
 
     

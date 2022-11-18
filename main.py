@@ -6,7 +6,11 @@ import time
 from datetime import datetime
 from openpyxl import Workbook, load_workbook
 from openpyxl.utils import get_column_letter
-
+import email, smtplib, ssl
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from email.mime.base import MIMEBase
+from email import encoders
 
 now1 = datetime.now()
 print(now1)
@@ -17,7 +21,6 @@ hora_inicio = hora_inicio.split('.')
 hora_inicio = hora_inicio[0]
 print('DATA INICIO: '+data_inicio)
 print('HORA INICIO: '+hora_inicio)
-
 
 servico = Service(ChromeDriverManager().install())
 
@@ -43,7 +46,7 @@ roll_white='roll white '
 
 peido = True
 cont=0
-quant=20
+quant=10
 sequencia=[]
 
 while peido==True and cont<quant:
@@ -120,6 +123,46 @@ while peido==True and cont<quant:
 
     print('CONT: '+str(cont))
 
+maior = ''
+mais_de_um_maior=False
+
+# lista_combinacoes_resultados = [black_to_black,black_to_white,black_to_red,white_to_white,white_to_red,white_to_black,red_to_red,
+#     red_to_black,red_to_white]
+
+lista_combinacoes_resultados = [0,1,2,1,1,0,3,
+    2,0]
+
+print('LISTA COMBINAÇÕES: '+str(lista_combinacoes_resultados))
+
+for x in range(0,len(lista_combinacoes_resultados)):
+    print(lista_combinacoes_resultados[x])
+    if lista_combinacoes_resultados[x] > maior:
+        maior = lista_combinacoes_resultados[x]
+        if x == 0:
+            opcao_maior='BLACK TO BLACK'
+        elif x == 1:
+            opcao_maior='BLACK TO WHITE'
+        elif x == 2:
+            opcao_maior='BLACK TO RED'
+        elif x == 3:
+            opcao_maior='WHITE TO WHITE'
+        elif x == 4:
+            opcao_maior='WHITE TO RED'
+        elif x == 5:
+            opcao_maior='WHITE TO BLACK'
+        elif x == 6:
+            opcao_maior='RED TO RED'
+        elif x == 7:
+            opcao_maior='RED TO BLACK'
+        elif x == 8:
+            opcao_maior='RED TO WHITE'
+
+    elif lista_combinacoes_resultados[x] == maior:
+        mais_de_um_maior=True
+
+maior = opcao_maior+' - '+str(maior)+' vezes'
+
+
 print('BLACK TO BLACK: '+str(black_to_black))
 print('BLACK TO WHITE: '+str(black_to_white))
 print('BLACK TO RED: '+str(black_to_red))
@@ -141,15 +184,160 @@ hora_inicio = hora_inicio.replace(":","-")
 lista_combinações = ['BLACK TO BLACK','BLACK TO WHITE','BLACK TO RED','WHITE TO WHITE','WHITE TO RED','WHITE TO BLACK',
     'RED TO RED','RED TO BLACK','RED TO WHITE']
 
-lista_combinacoes_resultados = [black_to_black,black_to_white,black_to_red,white_to_white,white_to_red,white_to_black,red_to_red,
-    red_to_black,red_to_white]
-
 
 wb = Workbook()
 ws1 = wb.active
 ws1.title = data_inicio+'_'+hora_inicio+'_'+hora_final
 
-for col in range(1,4):
+if mais_de_um_maior != True:
+    if 'BLACK TO BLACK' in maior:
+        while True:
+            print('esperando gatilho...')
+            proximo_depois_do_ultimo = driver.find_element(By.XPATH,"/html/body/main/div/div/div[2]/div[2]/div[2]/div/div/div[1]/div[1]").get_attribute("class")
+            print('Proximo depois do ultimo: '+ str(proximo_depois_do_ultimo))
+            if proximo_depois_do_ultimo == roll_black:
+                time.sleep(30)
+                temp = driver.find_element(By.XPATH,"/html/body/main/div/div/div[2]/div[2]/div[2]/div/div/div[1]/div[1]").get_attribute("class")
+                print('temp: '+ str(temp))
+                if temp == roll_black:
+                    result='ACERTOU -'+temp
+                else:
+                    result='ERROU -'+temp
+                break
+            else:
+                time.sleep(30)
+    if 'BLACK TO WHITE' in maior:
+        while True:
+            print('esperando gatilho...')
+            proximo_depois_do_ultimo = driver.find_element(By.XPATH,"/html/body/main/div/div/div[2]/div[2]/div[2]/div/div/div[1]/div[1]").get_attribute("class")
+            print('Proximo depois do ultimo: '+ str(proximo_depois_do_ultimo))
+            if proximo_depois_do_ultimo == roll_black:
+                time.sleep(30)
+                temp = driver.find_element(By.XPATH,"/html/body/main/div/div/div[2]/div[2]/div[2]/div/div/div[1]/div[1]").get_attribute("class")
+                print('temp: '+ str(temp))
+                if temp == roll_white:
+                    result='ACERTOU -'+temp
+                else:
+                    result='ERROU -'+temp
+                break
+            else:
+                time.sleep(30)
+    if 'BLACK TO RED' in maior:
+        while True:
+            print('esperando gatilho...')
+            proximo_depois_do_ultimo = driver.find_element(By.XPATH,"/html/body/main/div/div/div[2]/div[2]/div[2]/div/div/div[1]/div[1]").get_attribute("class")
+            print('Proximo depois do ultimo: '+ str(proximo_depois_do_ultimo))
+            if proximo_depois_do_ultimo == roll_black:
+                time.sleep(30)
+                temp = driver.find_element(By.XPATH,"/html/body/main/div/div/div[2]/div[2]/div[2]/div/div/div[1]/div[1]").get_attribute("class")
+                print('temp: '+ str(temp))
+                if temp == roll_red:
+                    result='ACERTOU -'+temp
+                else:
+                    result='ERROU -'+temp
+                break
+            else:
+                time.sleep(30)
+    if 'WHITE TO WHITE' in maior:
+        while True:
+            print('esperando gatilho...')
+            proximo_depois_do_ultimo = driver.find_element(By.XPATH,"/html/body/main/div/div/div[2]/div[2]/div[2]/div/div/div[1]/div[1]").get_attribute("class")
+            print('Proximo depois do ultimo: '+ str(proximo_depois_do_ultimo))
+            if proximo_depois_do_ultimo == roll_white:
+                time.sleep(30)
+                temp = driver.find_element(By.XPATH,"/html/body/main/div/div/div[2]/div[2]/div[2]/div/div/div[1]/div[1]").get_attribute("class")
+                print('temp: '+ str(temp))
+                if temp == roll_white:
+                    result='ACERTOU -'+temp
+                else:
+                    result='ERROU -'+temp
+                break
+            else:
+                time.sleep(30)
+    if 'WHITE TO RED' in maior:
+        while True:
+            print('esperando gatilho...')
+            proximo_depois_do_ultimo = driver.find_element(By.XPATH,"/html/body/main/div/div/div[2]/div[2]/div[2]/div/div/div[1]/div[1]").get_attribute("class")
+            print('Proximo depois do ultimo: '+ str(proximo_depois_do_ultimo))
+            if proximo_depois_do_ultimo == roll_white:
+                time.sleep(30)
+                temp = driver.find_element(By.XPATH,"/html/body/main/div/div/div[2]/div[2]/div[2]/div/div/div[1]/div[1]").get_attribute("class")
+                print('temp: '+ str(temp))
+                if temp == roll_red:
+                    result='ACERTOU -'+temp
+                else:
+                    result='ERROU -'+temp
+                break
+            else:
+                time.sleep(30)
+    if 'WHITE TO BLACK' in maior:
+        while True:
+            print('esperando gatilho...')
+            proximo_depois_do_ultimo = driver.find_element(By.XPATH,"/html/body/main/div/div/div[2]/div[2]/div[2]/div/div/div[1]/div[1]").get_attribute("class")
+            print('Proximo depois do ultimo: '+ str(proximo_depois_do_ultimo))
+            if proximo_depois_do_ultimo == roll_white:
+                time.sleep(30)
+                temp = driver.find_element(By.XPATH,"/html/body/main/div/div/div[2]/div[2]/div[2]/div/div/div[1]/div[1]").get_attribute("class")
+                print('temp: '+ str(temp))
+                if temp == roll_black:
+                    result='ACERTOU -'+temp
+                else:
+                    result='ERROU -'+temp
+                break
+            else:
+                time.sleep(30)
+    if 'RED TO RED' in maior:
+        while True:
+            print('esperando gatilho...')
+            proximo_depois_do_ultimo = driver.find_element(By.XPATH,"/html/body/main/div/div/div[2]/div[2]/div[2]/div/div/div[1]/div[1]").get_attribute("class")
+            print('Proximo depois do ultimo: '+ str(proximo_depois_do_ultimo))
+            if proximo_depois_do_ultimo == roll_red:
+                time.sleep(30)
+                temp = driver.find_element(By.XPATH,"/html/body/main/div/div/div[2]/div[2]/div[2]/div/div/div[1]/div[1]").get_attribute("class")
+                print('temp: '+ str(temp))
+                if temp == roll_red:
+                    result='ACERTOU -'+temp
+                else:
+                    result='ERROU -'+temp
+                break
+            else:
+                time.sleep(30)
+    if 'RED TO BLACK' in maior:
+        while True:
+            print('esperando gatilho...')
+            proximo_depois_do_ultimo = driver.find_element(By.XPATH,"/html/body/main/div/div/div[2]/div[2]/div[2]/div/div/div[1]/div[1]").get_attribute("class")
+            print('Proximo depois do ultimo: '+ str(proximo_depois_do_ultimo))
+            if proximo_depois_do_ultimo == roll_red:
+                time.sleep(30)
+                temp = driver.find_element(By.XPATH,"/html/body/main/div/div/div[2]/div[2]/div[2]/div/div/div[1]/div[1]").get_attribute("class")
+                print('temp: '+ str(temp))
+                if temp == roll_black:
+                    result='ACERTOU -'+temp
+                else:
+                    result='ERROU -'+temp
+                break
+            else:
+                time.sleep(30)
+    if 'RED TO WHITE' in maior:
+        while True:
+            print('esperando gatilho...')
+            proximo_depois_do_ultimo = driver.find_element(By.XPATH,"/html/body/main/div/div/div[2]/div[2]/div[2]/div/div/div[1]/div[1]").get_attribute("class")
+            print('Proximo depois do ultimo: '+ str(proximo_depois_do_ultimo))
+            if proximo_depois_do_ultimo == roll_red:
+                time.sleep(30)
+                temp = driver.find_element(By.XPATH,"/html/body/main/div/div/div[2]/div[2]/div[2]/div/div/div[1]/div[1]").get_attribute("class")
+                print('temp: '+ str(temp))
+                if temp == roll_white:
+                    result='ACERTOU -'+temp
+                else:
+                    result='ERROU -'+temp
+                break
+            else:
+                time.sleep(30)
+
+
+
+for col in range(1,6):
     if col == 1:
         for row in range(1,10):
             letter = get_column_letter(col)
@@ -159,15 +347,70 @@ for col in range(1,4):
             letter = get_column_letter(col)
             ws1[letter + str(row)] = lista_combinacoes_resultados[row-1]
     elif col == 3:
-        for row in range(1,11):
+        for row in range(1,quant+1):
             letter = get_column_letter(col)
             ws1[letter + str(row)] = sequencia[row-1]
+    elif col == 4:
+        if mais_de_um_maior != True:
+            for row in range(1,2):
+                letter = get_column_letter(col)
+                ws1[letter + str(row)] = maior
+        else:
+            for row in range(1,2):
+                letter = get_column_letter(col)
+                ws1[letter + str(row)] = 'Mais de 1 resultado maior'
+    elif col == 5 and mais_de_um_maior != True:
+        for row in range(1,2):
+                letter = get_column_letter(col)
+                ws1[letter + str(row)] = result
 
 ws2 = wb.create_sheet(title="Ok")
 ws2["C1"] = "OK"
 
+nome_arquivo = '('+str(quant)+')Relatorio_Robo_'+data_inicio+'_'+hora_inicio+'_'+hora_final+'.xlsx'
 
-wb.save('('+str(quant)+')Relatorio_Robo_'+data_inicio+'_'+hora_inicio+'_'+hora_final+'.xlsx')
+wb.save(nome_arquivo)
+
+#######################EMAIL###############################################
+
+host = "smtp.gmail.com"
+port = "587"
+login = "andretavares16@gmail.com"
+senha = "gmusraujapabcody"
+
+server = smtplib.SMTP(host,port)
+
+server.ehlo()
+server.starttls()
+server.login(login,senha)
+
+corpo = nome_arquivo
+
+email_msg = MIMEMultipart()
+email_msg['From']=login
+email_msg['To']=login
+email_msg['Subject']=nome_arquivo
+email_msg.attach(MIMEText(corpo,'plain'))
+
+caminho_arquivo = "C:\\Users\\andre.tavares\\Desktop\\DEV\\ROBOS\\ROBO BLAZE\\"+nome_arquivo
+attachment = open(caminho_arquivo,'rb')
+
+att = MIMEBase('application','octet-stream')
+att.set_payload(attachment.read())
+encoders.encode_base64(att)
+
+att.add_header(
+    "Content-Disposition",
+    f"attachment; filename= {nome_arquivo}",
+)
+attachment.close()
+
+email_msg.attach(att)
+
+server.sendmail(login,login, email_msg.as_string())
+server.quit()
+
+print('ROBO FINALIZADO !!!')
         
 
     

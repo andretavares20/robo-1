@@ -43,8 +43,10 @@ roll_white='roll white '
 
 peido = True
 cont=0
+quant=20
+sequencia=[]
 
-while peido==True and cont<10:
+while peido==True and cont<quant:
 
     cont = cont+1
 
@@ -56,58 +58,67 @@ while peido==True and cont<10:
     if cor1 == roll_black and cor2 == roll_black:
         black_to_black = black_to_black+1
         now2 = datetime.now()
+        sequencia.append('black_to_black-'+str(now2))
         print('black_to_black: '+str(now2))
         time.sleep(30)
     
     elif cor1 == roll_black and cor2 == roll_white:
         black_to_white = black_to_white+1
         now2 = datetime.now()
+        sequencia.append('black_to_white-'+str(now2))
         print('black_to_white: '+str(now2))
         time.sleep(30)
 
     elif cor1 == roll_black and cor2 == roll_red:
         black_to_red = black_to_red+1
         now2 = datetime.now()
+        sequencia.append('black_to_red-'+str(now2))
         print('black_to_red: '+str(now2))
         time.sleep(30)
 
     elif cor1 == roll_white and cor2 == roll_white:
         white_to_white = white_to_white+1
         now2 = datetime.now()
+        sequencia.append('white_to_white-'+str(now2))
         print('white_to_white: '+str(now2))
         time.sleep(30)
 
     elif cor1 == roll_white and cor2 == roll_red:
         white_to_red = white_to_red+1
         now2 = datetime.now()
+        sequencia.append('white_to_red-'+str(now2))
         print('white_to_red: '+str(now2))
         time.sleep(30)
 
     elif cor1 == roll_white and cor2 == roll_black:
         white_to_black = white_to_black+1
         now2 = datetime.now()
+        sequencia.append('white_to_black-'+str(now2))
         print('white_to_black: '+str(now2))
         time.sleep(30)
 
     elif cor1 == roll_red and cor2 == roll_red:
         red_to_red = red_to_red+1
         now2 = datetime.now()
+        sequencia.append('red_to_red-'+str(now2))
         print('red_to_red: '+str(now2))
         time.sleep(30)
 
     elif cor1 == roll_red and cor2 == roll_white:
         red_to_white = red_to_white+1
         now2 = datetime.now()
+        sequencia.append('red_to_white-'+str(now2))
         print('red_to_white: '+str(now2))
         time.sleep(30)
 
     elif cor1== roll_red and cor2 == roll_black:
         red_to_black = red_to_black+1
         now2 = datetime.now()
+        sequencia.append('red_to_black-'+str(now2))
         print('red_to_black: '+str(now2))
         time.sleep(30)
 
-    
+    print('CONT: '+str(cont))
 
 print('BLACK TO BLACK: '+str(black_to_black))
 print('BLACK TO WHITE: '+str(black_to_white))
@@ -138,7 +149,7 @@ wb = Workbook()
 ws1 = wb.active
 ws1.title = data_inicio+'_'+hora_inicio+'_'+hora_final
 
-for col in range(1,3):
+for col in range(1,4):
     if col == 1:
         for row in range(1,10):
             letter = get_column_letter(col)
@@ -147,12 +158,16 @@ for col in range(1,3):
         for row in range(1,10):
             letter = get_column_letter(col)
             ws1[letter + str(row)] = lista_combinacoes_resultados[row-1]
+    elif col == 3:
+        for row in range(1,11):
+            letter = get_column_letter(col)
+            ws1[letter + str(row)] = sequencia[row-1]
 
 ws2 = wb.create_sheet(title="Ok")
 ws2["C1"] = "OK"
 
 
-wb.save('Relatorio_Robo_'+data_inicio+'_'+hora_inicio+'_'+hora_final+'.xlsx')
+wb.save('('+str(quant)+')Relatorio_Robo_'+data_inicio+'_'+hora_inicio+'_'+hora_final+'.xlsx')
         
 
     

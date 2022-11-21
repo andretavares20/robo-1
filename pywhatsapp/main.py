@@ -11,12 +11,11 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.mime.base import MIMEBase
 from email import encoders
-import os
-from twilio.rest import Client
-
-print(os.environ)
-account_sid = os.environ['ACc7e39bceb12537f4b54f57b15cfb61f1']
-auth_token = os.environ['f363fe7257e7f21e0ac4add24b86cb9e']
+import telebot 
+from telethon.sync import TelegramClient 
+from telethon.tl.types import InputPeerUser, InputPeerChannel 
+from telethon import TelegramClient, sync, events 
+import requests
 
 now1 = datetime.now()
 print(now1)
@@ -34,31 +33,54 @@ driver = webdriver.Chrome(service=servico)
 
 driver.maximize_window()
 
-driver.get("https://tipminer.com/blaze/double")
-
-black_to_black=0
-black_to_white=0
-black_to_red=0
-white_to_white=0
-white_to_red=0
-white_to_black=0
-red_to_red=0
-red_to_white=0
-red_to_black=0
-
 roll_black='roll black '
 roll_red='roll red '
 roll_white='roll white '
 
-peido = True
-quant=5
+quant=1
 sequencia=[]
 
+def last_chat_id(token):
+    try:
+        url = "https://api.telegram.org/bot{}/getUpdates".format(token)
+        response = requests.get(url)
+        if response.status_code == 200:
+            json_msg = response.json()
+            for json_result in reversed(json_msg['result']):
+                message_keys = json_result['message'].keys()
+                if ('new_chat_member' in message_keys) or ('group_chat_created' in message_keys):
+                    return json_result['message']['chat']['id']
+            print('Nenhum grupo encontrado')
+        else:
+            print('A resposta falhou, código de status: {}'.format(response.status_code))
+    except Exception as e:
+        print("Erro no getUpdates:", e)
+
+# enviar mensagens utilizando o bot para um chat específico
+def send_message(token, chat_id, message):
+    try:
+        data = {"chat_id": chat_id, "text": message}
+        url = "https://api.telegram.org/bot{}/sendMessage".format(token)
+        requests.post(url, data)
+    except Exception as e:
+        print("Erro no sendMessage:", e)
+
 while True:
+    black_to_black=0
+    black_to_white=0
+    black_to_red=0
+    white_to_white=0
+    white_to_red=0
+    white_to_black=0
+    red_to_red=0
+    red_to_white=0
+    red_to_black=0
     cont=0
-    while peido==True and cont<quant:
+    while cont<quant:
 
         cont = cont+1
+
+        driver.get("https://tipminer.com/blaze/double")
 
         cor1 = driver.find_element(By.XPATH,"/html/body/main/div/div/div[2]/div[2]/div[2]/div/div/div[2]/div[1]").get_attribute("class")
         cor2 = driver.find_element(By.XPATH,"/html/body/main/div/div/div[2]/div[2]/div[2]/div/div/div[1]/div[1]").get_attribute("class")
@@ -201,6 +223,9 @@ while True:
     ws1.title = data_inicio+'_'+hora_inicio+'_'+hora_final
 
     if mais_de_um_maior != True:
+        while len(driver.find_elements(By.XPATH,"/html/body/main/div/div/div[2]/div[2]/div[2]/div/div/div[1]/div[1]")) <1:
+            print('esperando aparecer quadradinho double')
+            time.sleep(1)
         if 'BLACK TO BLACK' in maior:
             while True:
                 print('esperando gatilho...')
@@ -384,57 +409,53 @@ while True:
 
     #######################EMAIL###############################################
 
-    host = "smtp.gmail.com"
-    port = "587"
-    login = "andretavares16@gmail.com"
-    senha = "gmusraujapabcody"
+    # host = "smtp.gmail.com"
+    # port = "587"
+    # login = "andretavares16@gmail.com"
+    # senha = "gmusraujapabcody"
 
-    server = smtplib.SMTP(host,port)
+    # server = smtplib.SMTP(host,port)
 
-    server.ehlo()
-    server.starttls()
-    server.login(login,senha)
+    # server.ehlo()
+    # server.starttls()
+    # server.login(login,senha)
 
-    corpo = nome_arquivo
+    # corpo = nome_arquivo
 
-    email_msg = MIMEMultipart()
-    email_msg['From']=login
-    email_msg['To']=login
-    email_msg['Subject']=nome_arquivo
-    email_msg.attach(MIMEText(corpo,'plain'))
+    # email_msg = MIMEMultipart()
+    # email_msg['From']=login
+    # email_msg['To']=login
+    # email_msg['Subject']=nome_arquivo
+    # email_msg.attach(MIMEText(corpo,'plain'))
 
-    caminho_arquivo = "C:\\Users\\andre\\OneDrive\\Área de Trabalho\\DEV\\"+nome_arquivo
-    attachment = open(caminho_arquivo,'rb')
+    # caminho_arquivo = "C:\\Users\\andre.tavares\\Desktop\\DEV\\ROBOS\\"+nome_arquivo
+    # attachment = open(caminho_arquivo,'rb')
 
-    att = MIMEBase('application','octet-stream')
-    att.set_payload(attachment.read())
-    encoders.encode_base64(att)
+    # att = MIMEBase('application','octet-stream')
+    # att.set_payload(attachment.read())
+    # encoders.encode_base64(att)
 
-    att.add_header(
-        "Content-Disposition",
-        f"attachment; filename= {nome_arquivo}",
-    )
-    attachment.close()
+    # att.add_header(
+    #     "Content-Disposition",
+    #     f"attachment; filename= {nome_arquivo}",
+    # )
+    # attachment.close()
 
-    email_msg.attach(att)
+    # email_msg.attach(att)
 
-    server.sendmail(login,login, email_msg.as_string())
-    server.quit()
+    # server.sendmail(login,login, email_msg.as_string())
+    # server.quit()
 
-    #######################WHATSAPP###################################################
+    #######################TELEGRAM###################################################
 
-    # Find your Account SID and Auth Token at twilio.com/console
-    # and set the environment variables. See http://twil.io/secure
+    token = '5951270999:AAEPcA790iG3UJilxlVIA-WwFoQRAoSLtuc'
+
+    chat_id = last_chat_id(token)
+
+    print("Id do chat:",chat_id)
+
+    send_message(token,chat_id,nome_arquivo)
     
-    client = Client(account_sid, auth_token)
-
-    message = client.messages \
-                    .create(
-                        body=nome_arquivo,
-                        from_='+5527996152503',
-                        to='+5527996152503'
-                    )
-
     print('ROBO FINALIZADO !!!')
         
 

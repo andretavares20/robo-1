@@ -97,6 +97,9 @@ while True:
 
         cor1 = driver.find_element(By.XPATH,"/html/body/main/div/div/div[2]/div[2]/div[2]/div/div/div[2]/div[1]").get_attribute("class")
         cor2 = driver.find_element(By.XPATH,"/html/body/main/div/div/div[2]/div[2]/div[2]/div/div/div[1]/div[1]").get_attribute("class")
+        if cor2 == roll_white:
+            print('branco!!!')
+            break
         now2 = driver.find_element(By.XPATH,'/html/body/main/div/div/div[2]/div[2]/div[2]/div/div/div[2]/div[2]').get_property("innerText")
         num = driver.find_element(By.XPATH,'/html/body/main/div/div/div[2]/div[2]/div[2]/div/div/div[2]/div[1]/div').get_property("outerText")
         print('COR1: '+str(cor1))
@@ -124,7 +127,7 @@ while True:
 
         print('CONT: '+str(cont))
         print('SEQUENCIA: ',sequencia)
-        time.sleep(25)
+        time.sleep(26)
 
     maior = 0
     mais_de_um_maior=False
@@ -203,6 +206,7 @@ while True:
             time.sleep(1)
         if 'BLACK TO BLACK' in maior:
             while True:
+                driver.refresh()
                 print('esperando gatilho...')
                 if lista_combinacoes_resultados[0] <=2 or lista_combinacoes_resultados[0] >=4:
                         send_message(token,chat_id,'SINAL CANCELADO - NÃO É IGUAL A 3')
@@ -216,10 +220,10 @@ while True:
                     break
                 if proximo_depois_do_ultimo == roll_black:
                     send_message(token,chat_id,'SINAL CONFIRMADO')
+                    time.sleep(26)
                     temp = driver.find_element(By.XPATH,"/html/body/main/div/div/div[2]/div[2]/div[2]/div/div/div[1]/div[1]").get_attribute("class")
                     numTemp = driver.find_element(By.XPATH,"/html/body/main/div/div/div[2]/div[2]/div[2]/div/div/div[1]/div[1]").get_property("outerText")
                     print('temp: '+ str(temp))
-                    time.sleep(25)
                     if temp == roll_black:
                         result='ACERTOU -'+temp+'('+numTemp+')'
                         send_message(token,chat_id,'GREEN')
@@ -228,10 +232,11 @@ while True:
                         send_message(token,chat_id,'LOSS')
                     break
                 else:
-                    time.sleep(25)
+                    time.sleep(26)
         
         if 'BLACK TO RED' in maior:
             while True:
+                driver.refresh()
                 print('esperando gatilho...')
                 if lista_combinacoes_resultados[1] <=2 or lista_combinacoes_resultados[1] >=4:
                         send_message(token,chat_id,'SINAL CANCELADO - NÃO É IGUAL A 3')
@@ -245,10 +250,10 @@ while True:
                     break
                 if proximo_depois_do_ultimo == roll_black:
                     send_message(token,chat_id,'SINAL CONFIRMADO')
+                    time.sleep(26)
                     temp = driver.find_element(By.XPATH,"/html/body/main/div/div/div[2]/div[2]/div[2]/div/div/div[1]/div[1]").get_attribute("class")
                     numTemp = driver.find_element(By.XPATH,"/html/body/main/div/div/div[2]/div[2]/div[2]/div/div/div[1]/div[1]").get_property("outerText")
                     print('temp: '+ str(temp))
-                    time.sleep(25)
                     if temp == roll_red:
                         result='ACERTOU -'+temp+'('+numTemp+')'
                         send_message(token,chat_id,'GREEN')
@@ -257,10 +262,11 @@ while True:
                         send_message(token,chat_id,'LOSS')
                     break
                 else:
-                    time.sleep(25)   
+                    time.sleep(26)   
         
         if 'RED TO RED' in maior:
             while True:
+                driver.refresh()
                 print('esperando gatilho...')
                 if lista_combinacoes_resultados[2] <=2 or lista_combinacoes_resultados[2] >=4:
                         send_message(token,chat_id,'SINAL CANCELADO - NÃO É IGUAL A 3')
@@ -274,10 +280,10 @@ while True:
                     break
                 if proximo_depois_do_ultimo == roll_red:
                     send_message(token,chat_id,'SINAL CONFIRMADO')
+                    time.sleep(26)
                     temp = driver.find_element(By.XPATH,"/html/body/main/div/div/div[2]/div[2]/div[2]/div/div/div[1]/div[1]").get_attribute("class")
                     numTemp = driver.find_element(By.XPATH,"/html/body/main/div/div/div[2]/div[2]/div[2]/div/div/div[1]/div[1]").get_property("outerText")
                     print('temp: '+ str(temp))
-                    time.sleep(25)
                     if temp == roll_red:
                         result='ACERTOU -'+temp+'('+numTemp+')'
                         send_message(token,chat_id,'GREEN')
@@ -286,9 +292,10 @@ while True:
                         send_message(token,chat_id,'LOSS')
                     break
                 else:
-                    time.sleep(25)
+                    time.sleep(26)
         if 'RED TO BLACK' in maior:
             while True:
+                driver.refresh()
                 print('esperando gatilho...')
                 if lista_combinacoes_resultados[3] <=2 or lista_combinacoes_resultados[3] >=4:
                         send_message(token,chat_id,'SINAL CANCELADO - NÃO É IGUAL A 3')
@@ -302,10 +309,10 @@ while True:
                     break
                 if proximo_depois_do_ultimo == roll_red:
                     send_message(token,chat_id,'SINAL CONFIRMADO')
+                    time.sleep(26)
                     temp = driver.find_element(By.XPATH,"/html/body/main/div/div/div[2]/div[2]/div[2]/div/div/div[1]/div[1]").get_attribute("class")
                     numTemp = driver.find_element(By.XPATH,"/html/body/main/div/div/div[2]/div[2]/div[2]/div/div/div[1]/div[1]").get_property("outerText")
                     print('temp: '+ str(temp))
-                    time.sleep(25)
                     if temp == roll_black:
                         result='ACERTOU -'+temp+'('+numTemp+')'
                         send_message(token,chat_id,'GREEN')
@@ -314,7 +321,7 @@ while True:
                         send_message(token,chat_id,'LOSS')
                     break
                 else:
-                    time.sleep(25)
+                    time.sleep(26)
         
         if sinal_cancelado==True:
             continue

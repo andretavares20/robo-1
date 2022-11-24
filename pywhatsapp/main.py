@@ -37,7 +37,7 @@ roll_black='roll black '
 roll_red='roll red '
 roll_white='roll white '
 
-quant=1
+quant=5
 sequencia=[]
 
 def last_chat_id(token):
@@ -166,6 +166,7 @@ while True:
     for x in range(0,len(lista_combinacoes_resultados)):
         print(lista_combinacoes_resultados[x])
         if lista_combinacoes_resultados[x] > maior:
+            mais_de_um_maior=False
             maior=0
             maior = lista_combinacoes_resultados[x]
             if x == 0:

@@ -39,6 +39,7 @@ roll_white='roll white '
 
 quant=5
 sequencia=[]
+sinal_cancelado=False
 
 def last_chat_id(token):
     try:
@@ -65,7 +66,13 @@ def send_message(token, chat_id, message):
     except Exception as e:
         print("Erro no sendMessage:", e)
 
+driver.get("https://tipminer.com/blaze/double")
+
 while True:
+    token = '5765350839:AAEjP-bOj9Qc-qhLY5iRjf7YHTUMDSZprOo'
+    chat_id = last_chat_id(token)
+
+    print("Id do chat:",chat_id)
     black_to_black=0
     black_to_white=0
     black_to_red=0
@@ -76,87 +83,53 @@ while True:
     red_to_white=0
     red_to_black=0
     cont=0
+    sinal_cancelado=False
+    sequencia=[]
     while cont<quant:
-
+        
         cont = cont+1
 
-        driver.get("https://tipminer.com/blaze/double")
+        driver.refresh()
+        
+        while len(driver.find_elements(By.XPATH,"/html/body/main/div/div/div[2]/div[2]/div[2]/div/div/div[2]/div[1]")) <1:
+            print('esperando aparecer quadradinho double')
+            time.sleep(1)
 
         cor1 = driver.find_element(By.XPATH,"/html/body/main/div/div/div[2]/div[2]/div[2]/div/div/div[2]/div[1]").get_attribute("class")
         cor2 = driver.find_element(By.XPATH,"/html/body/main/div/div/div[2]/div[2]/div[2]/div/div/div[1]/div[1]").get_attribute("class")
+        now2 = driver.find_element(By.XPATH,'/html/body/main/div/div/div[2]/div[2]/div[2]/div/div/div[2]/div[2]').get_property("innerText")
+        num = driver.find_element(By.XPATH,'/html/body/main/div/div/div[2]/div[2]/div[2]/div/div/div[2]/div[1]/div').get_property("outerText")
         print('COR1: '+str(cor1))
         print('COR2: '+str(cor2))
 
         if cor1 == roll_black and cor2 == roll_black:
             black_to_black = black_to_black+1
-            now2 = datetime.now()
-            sequencia.append('black_to_black-'+str(now2))
+            sequencia.append('black_to_black-('+num+')'+str(now2))
             print('black_to_black: '+str(now2))
-            time.sleep(30)
-        
-        elif cor1 == roll_black and cor2 == roll_white:
-            black_to_white = black_to_white+1
-            now2 = datetime.now()
-            sequencia.append('black_to_white-'+str(now2))
-            print('black_to_white: '+str(now2))
-            time.sleep(30)
 
         elif cor1 == roll_black and cor2 == roll_red:
             black_to_red = black_to_red+1
-            now2 = datetime.now()
-            sequencia.append('black_to_red-'+str(now2))
+            sequencia.append('black_to_red-('+num+')'+str(now2))
             print('black_to_red: '+str(now2))
-            time.sleep(30)
-
-        elif cor1 == roll_white and cor2 == roll_white:
-            white_to_white = white_to_white+1
-            now2 = datetime.now()
-            sequencia.append('white_to_white-'+str(now2))
-            print('white_to_white: '+str(now2))
-            time.sleep(30)
-
-        elif cor1 == roll_white and cor2 == roll_red:
-            white_to_red = white_to_red+1
-            now2 = datetime.now()
-            sequencia.append('white_to_red-'+str(now2))
-            print('white_to_red: '+str(now2))
-            time.sleep(30)
-
-        elif cor1 == roll_white and cor2 == roll_black:
-            white_to_black = white_to_black+1
-            now2 = datetime.now()
-            sequencia.append('white_to_black-'+str(now2))
-            print('white_to_black: '+str(now2))
-            time.sleep(30)
 
         elif cor1 == roll_red and cor2 == roll_red:
             red_to_red = red_to_red+1
-            now2 = datetime.now()
-            sequencia.append('red_to_red-'+str(now2))
+            sequencia.append('red_to_red-('+num+')'+str(now2))
             print('red_to_red: '+str(now2))
-            time.sleep(30)
-
-        elif cor1 == roll_red and cor2 == roll_white:
-            red_to_white = red_to_white+1
-            now2 = datetime.now()
-            sequencia.append('red_to_white-'+str(now2))
-            print('red_to_white: '+str(now2))
-            time.sleep(30)
 
         elif cor1== roll_red and cor2 == roll_black:
             red_to_black = red_to_black+1
-            now2 = datetime.now()
-            sequencia.append('red_to_black-'+str(now2))
+            sequencia.append('red_to_black-('+num+')'+str(now2))
             print('red_to_black: '+str(now2))
-            time.sleep(30)
 
         print('CONT: '+str(cont))
+        print('SEQUENCIA: ',sequencia)
+        time.sleep(25)
 
     maior = 0
     mais_de_um_maior=False
 
-    lista_combinacoes_resultados = [black_to_black,black_to_white,black_to_red,white_to_white,white_to_red,white_to_black,red_to_red,
-        red_to_black,red_to_white]
+    lista_combinacoes_resultados = [black_to_black,black_to_red,red_to_red,red_to_black]
 
     # lista_combinacoes_resultados = [0,1,2,1,1,0,3,
     #     2,0]
@@ -172,51 +145,52 @@ while True:
             if x == 0:
                 opcao_maior='BLACK TO BLACK'
             elif x == 1:
-                opcao_maior='BLACK TO WHITE'
-            elif x == 2:
                 opcao_maior='BLACK TO RED'
-            elif x == 3:
-                opcao_maior='WHITE TO WHITE'
-            elif x == 4:
-                opcao_maior='WHITE TO RED'
-            elif x == 5:
-                opcao_maior='WHITE TO BLACK'
-            elif x == 6:
+            elif x == 2:
                 opcao_maior='RED TO RED'
-            elif x == 7:
+            elif x == 3:
                 opcao_maior='RED TO BLACK'
-            elif x == 8:
-                opcao_maior='RED TO WHITE'
 
         elif lista_combinacoes_resultados[x] == maior and maior!=0:
             mais_de_um_maior=True
+
+    m_maior = maior
 
     maior = opcao_maior+' - '+str(maior)+' vezes'
     if mais_de_um_maior==True:
         print('MAIS DE UM MAIOR')
         continue
 
+    chat_id = last_chat_id(token)
+
+    print("Id do chat:",chat_id)
+
+    send_message(token,chat_id,f'ATENÇÃO, AGUARDANDO CONFIRMAÇÃO DE SINAL - {opcao_maior}')
+
+    if 'BLACK TO BLACK' in opcao_maior:
+        send_message(token,chat_id,'GATILHO = LOGO APÓS O PRIMEIRO PRETO, JOGAR PRETO.')
+    if 'BLACK TO RED' in opcao_maior:
+        send_message(token,chat_id,'GATILHO = LOGO APÓS O PRIMEIRO PRETO, JOGAR VERMELHO.')
+    if 'RED TO RED' in opcao_maior:
+        send_message(token,chat_id,'GATILHO = LOGO APÓS O PRIMEIRO VERMELHO, JOGAR VERMELHO.')
+    if 'RED TO BLACK' in opcao_maior:
+        send_message(token,chat_id,'GATILHO = LOGO APÓS O PRIMEIRO VERMELHO, JOGAR PRETO.')
 
     print('BLACK TO BLACK: '+str(black_to_black))
-    print('BLACK TO WHITE: '+str(black_to_white))
     print('BLACK TO RED: '+str(black_to_red))
-    print('WHITE TO WHITE: '+str(white_to_white))
-    print('WHITE TO RED: '+str(white_to_red))
-    print('WHITE TO BLACK: '+str(white_to_black))
     print('RED TO RED: '+str(red_to_red))
     print('RED TO BLACK: '+str(red_to_black))
-    print('RED TO WHITE: '+str(red_to_white))
 
-    now2 = str(now2).split(' ')
-    data_final = now2[0]
-    hora_final = now2[1]
+    now3 = datetime.now()
+    now3 = str(now3).split(' ')
+    data_final = now3[0]
+    hora_final = now3[1]
     hora_final = hora_final.split('.')
     hora_final = hora_final[0]
     hora_final = hora_final.replace(":","-")
     hora_inicio = hora_inicio.replace(":","-")
 
-    lista_combinações = ['BLACK TO BLACK','BLACK TO WHITE','BLACK TO RED','WHITE TO WHITE','WHITE TO RED','WHITE TO BLACK',
-        'RED TO RED','RED TO BLACK','RED TO WHITE']
+    lista_combinações = ['BLACK TO BLACK','BLACK TO RED','RED TO RED','RED TO BLACK']
 
 
     wb = Workbook()
@@ -230,161 +204,134 @@ while True:
         if 'BLACK TO BLACK' in maior:
             while True:
                 print('esperando gatilho...')
+                if lista_combinacoes_resultados[0] <=2 or lista_combinacoes_resultados[0] >=4:
+                        send_message(token,chat_id,'SINAL CANCELADO - NÃO É IGUAL A 3')
+                        sinal_cancelado=True
+                        break
                 proximo_depois_do_ultimo = driver.find_element(By.XPATH,"/html/body/main/div/div/div[2]/div[2]/div[2]/div/div/div[1]/div[1]").get_attribute("class")
                 print('Proximo depois do ultimo: '+ str(proximo_depois_do_ultimo))
+                if proximo_depois_do_ultimo == roll_white:
+                    send_message(token,chat_id,'SINAL CANCELADO - ROLL BRANCA')
+                    sinal_cancelado=True
+                    break
                 if proximo_depois_do_ultimo == roll_black:
-                    time.sleep(30)
+                    send_message(token,chat_id,'SINAL CONFIRMADO')
                     temp = driver.find_element(By.XPATH,"/html/body/main/div/div/div[2]/div[2]/div[2]/div/div/div[1]/div[1]").get_attribute("class")
+                    numTemp = driver.find_element(By.XPATH,"/html/body/main/div/div/div[2]/div[2]/div[2]/div/div/div[1]/div[1]").get_property("outerText")
                     print('temp: '+ str(temp))
+                    time.sleep(25)
                     if temp == roll_black:
-                        result='ACERTOU -'+temp
+                        result='ACERTOU -'+temp+'('+numTemp+')'
+                        send_message(token,chat_id,'GREEN')
                     else:
-                        result='ERROU -'+temp
+                        result='ERROU -'+temp+'('+numTemp+')'
+                        send_message(token,chat_id,'LOSS')
                     break
                 else:
-                    time.sleep(30)
-        if 'BLACK TO WHITE' in maior:
-            while True:
-                print('esperando gatilho...')
-                proximo_depois_do_ultimo = driver.find_element(By.XPATH,"/html/body/main/div/div/div[2]/div[2]/div[2]/div/div/div[1]/div[1]").get_attribute("class")
-                print('Proximo depois do ultimo: '+ str(proximo_depois_do_ultimo))
-                if proximo_depois_do_ultimo == roll_black:
-                    time.sleep(30)
-                    temp = driver.find_element(By.XPATH,"/html/body/main/div/div/div[2]/div[2]/div[2]/div/div/div[1]/div[1]").get_attribute("class")
-                    print('temp: '+ str(temp))
-                    if temp == roll_white:
-                        result='ACERTOU -'+temp
-                    else:
-                        result='ERROU -'+temp
-                    break
-                else:
-                    time.sleep(30)
+                    time.sleep(25)
+        
         if 'BLACK TO RED' in maior:
             while True:
                 print('esperando gatilho...')
+                if lista_combinacoes_resultados[1] <=2 or lista_combinacoes_resultados[1] >=4:
+                        send_message(token,chat_id,'SINAL CANCELADO - NÃO É IGUAL A 3')
+                        sinal_cancelado=True
+                        break
                 proximo_depois_do_ultimo = driver.find_element(By.XPATH,"/html/body/main/div/div/div[2]/div[2]/div[2]/div/div/div[1]/div[1]").get_attribute("class")
                 print('Proximo depois do ultimo: '+ str(proximo_depois_do_ultimo))
+                if proximo_depois_do_ultimo == roll_white:
+                    send_message(token,chat_id,'SINAL CANCELADO - ROLL BRANCA')
+                    sinal_cancelado=True
+                    break
                 if proximo_depois_do_ultimo == roll_black:
-                    time.sleep(30)
+                    send_message(token,chat_id,'SINAL CONFIRMADO')
                     temp = driver.find_element(By.XPATH,"/html/body/main/div/div/div[2]/div[2]/div[2]/div/div/div[1]/div[1]").get_attribute("class")
+                    numTemp = driver.find_element(By.XPATH,"/html/body/main/div/div/div[2]/div[2]/div[2]/div/div/div[1]/div[1]").get_property("outerText")
                     print('temp: '+ str(temp))
+                    time.sleep(25)
                     if temp == roll_red:
-                        result='ACERTOU -'+temp
+                        result='ACERTOU -'+temp+'('+numTemp+')'
+                        send_message(token,chat_id,'GREEN')
                     else:
-                        result='ERROU -'+temp
+                        result='ERROU -'+temp+'('+numTemp+')'
+                        send_message(token,chat_id,'LOSS')
                     break
                 else:
-                    time.sleep(30)
-        if 'WHITE TO WHITE' in maior:
-            while True:
-                print('esperando gatilho...')
-                proximo_depois_do_ultimo = driver.find_element(By.XPATH,"/html/body/main/div/div/div[2]/div[2]/div[2]/div/div/div[1]/div[1]").get_attribute("class")
-                print('Proximo depois do ultimo: '+ str(proximo_depois_do_ultimo))
-                if proximo_depois_do_ultimo == roll_white:
-                    time.sleep(30)
-                    temp = driver.find_element(By.XPATH,"/html/body/main/div/div/div[2]/div[2]/div[2]/div/div/div[1]/div[1]").get_attribute("class")
-                    print('temp: '+ str(temp))
-                    if temp == roll_white:
-                        result='ACERTOU -'+temp
-                    else:
-                        result='ERROU -'+temp
-                    break
-                else:
-                    time.sleep(30)
-        if 'WHITE TO RED' in maior:
-            while True:
-                print('esperando gatilho...')
-                proximo_depois_do_ultimo = driver.find_element(By.XPATH,"/html/body/main/div/div/div[2]/div[2]/div[2]/div/div/div[1]/div[1]").get_attribute("class")
-                print('Proximo depois do ultimo: '+ str(proximo_depois_do_ultimo))
-                if proximo_depois_do_ultimo == roll_white:
-                    time.sleep(30)
-                    temp = driver.find_element(By.XPATH,"/html/body/main/div/div/div[2]/div[2]/div[2]/div/div/div[1]/div[1]").get_attribute("class")
-                    print('temp: '+ str(temp))
-                    if temp == roll_red:
-                        result='ACERTOU -'+temp
-                    else:
-                        result='ERROU -'+temp
-                    break
-                else:
-                    time.sleep(30)
-        if 'WHITE TO BLACK' in maior:
-            while True:
-                print('esperando gatilho...')
-                proximo_depois_do_ultimo = driver.find_element(By.XPATH,"/html/body/main/div/div/div[2]/div[2]/div[2]/div/div/div[1]/div[1]").get_attribute("class")
-                print('Proximo depois do ultimo: '+ str(proximo_depois_do_ultimo))
-                if proximo_depois_do_ultimo == roll_white:
-                    time.sleep(30)
-                    temp = driver.find_element(By.XPATH,"/html/body/main/div/div/div[2]/div[2]/div[2]/div/div/div[1]/div[1]").get_attribute("class")
-                    print('temp: '+ str(temp))
-                    if temp == roll_black:
-                        result='ACERTOU -'+temp
-                    else:
-                        result='ERROU -'+temp
-                    break
-                else:
-                    time.sleep(30)
+                    time.sleep(25)   
+        
         if 'RED TO RED' in maior:
             while True:
                 print('esperando gatilho...')
+                if lista_combinacoes_resultados[2] <=2 or lista_combinacoes_resultados[2] >=4:
+                        send_message(token,chat_id,'SINAL CANCELADO - NÃO É IGUAL A 3')
+                        sinal_cancelado=True
+                        break
                 proximo_depois_do_ultimo = driver.find_element(By.XPATH,"/html/body/main/div/div/div[2]/div[2]/div[2]/div/div/div[1]/div[1]").get_attribute("class")
                 print('Proximo depois do ultimo: '+ str(proximo_depois_do_ultimo))
+                if proximo_depois_do_ultimo == roll_white:
+                    send_message(token,chat_id,'SINAL CANCELADO - ROLL BRANCA')
+                    sinal_cancelado=True
+                    break
                 if proximo_depois_do_ultimo == roll_red:
-                    time.sleep(30)
+                    send_message(token,chat_id,'SINAL CONFIRMADO')
                     temp = driver.find_element(By.XPATH,"/html/body/main/div/div/div[2]/div[2]/div[2]/div/div/div[1]/div[1]").get_attribute("class")
+                    numTemp = driver.find_element(By.XPATH,"/html/body/main/div/div/div[2]/div[2]/div[2]/div/div/div[1]/div[1]").get_property("outerText")
                     print('temp: '+ str(temp))
+                    time.sleep(25)
                     if temp == roll_red:
-                        result='ACERTOU -'+temp
+                        result='ACERTOU -'+temp+'('+numTemp+')'
+                        send_message(token,chat_id,'GREEN')
                     else:
-                        result='ERROU -'+temp
+                        result='ERROU -'+temp+'('+numTemp+')'
+                        send_message(token,chat_id,'LOSS')
                     break
                 else:
-                    time.sleep(30)
+                    time.sleep(25)
         if 'RED TO BLACK' in maior:
             while True:
                 print('esperando gatilho...')
+                if lista_combinacoes_resultados[3] <=2 or lista_combinacoes_resultados[3] >=4:
+                        send_message(token,chat_id,'SINAL CANCELADO - NÃO É IGUAL A 3')
+                        sinal_cancelado=True
+                        break
                 proximo_depois_do_ultimo = driver.find_element(By.XPATH,"/html/body/main/div/div/div[2]/div[2]/div[2]/div/div/div[1]/div[1]").get_attribute("class")
                 print('Proximo depois do ultimo: '+ str(proximo_depois_do_ultimo))
+                if proximo_depois_do_ultimo == roll_white:
+                    send_message(token,chat_id,'SINAL CANCELADO - ROLL BRANCA')
+                    sinal_cancelado=True
+                    break
                 if proximo_depois_do_ultimo == roll_red:
-                    time.sleep(30)
+                    send_message(token,chat_id,'SINAL CONFIRMADO')
                     temp = driver.find_element(By.XPATH,"/html/body/main/div/div/div[2]/div[2]/div[2]/div/div/div[1]/div[1]").get_attribute("class")
+                    numTemp = driver.find_element(By.XPATH,"/html/body/main/div/div/div[2]/div[2]/div[2]/div/div/div[1]/div[1]").get_property("outerText")
                     print('temp: '+ str(temp))
+                    time.sleep(25)
                     if temp == roll_black:
-                        result='ACERTOU -'+temp
+                        result='ACERTOU -'+temp+'('+numTemp+')'
+                        send_message(token,chat_id,'GREEN')
                     else:
-                        result='ERROU -'+temp
+                        result='ERROU -'+temp+'('+numTemp+')'
+                        send_message(token,chat_id,'LOSS')
                     break
                 else:
-                    time.sleep(30)
-        if 'RED TO WHITE' in maior:
-            while True:
-                print('esperando gatilho...')
-                proximo_depois_do_ultimo = driver.find_element(By.XPATH,"/html/body/main/div/div/div[2]/div[2]/div[2]/div/div/div[1]/div[1]").get_attribute("class")
-                print('Proximo depois do ultimo: '+ str(proximo_depois_do_ultimo))
-                if proximo_depois_do_ultimo == roll_red:
-                    time.sleep(30)
-                    temp = driver.find_element(By.XPATH,"/html/body/main/div/div/div[2]/div[2]/div[2]/div/div/div[1]/div[1]").get_attribute("class")
-                    print('temp: '+ str(temp))
-                    if temp == roll_white:
-                        result='ACERTOU -'+temp
-                    else:
-                        result='ERROU -'+temp
-                    break
-                else:
-                    time.sleep(30)
-
+                    time.sleep(25)
+        
+        if sinal_cancelado==True:
+            continue
 
 
     for col in range(1,6):
         if col == 1:
-            for row in range(1,10):
+            for row in range(1,quant):
                 letter = get_column_letter(col)
                 ws1[letter + str(row)] = lista_combinações[row-1]
         elif col == 2:
-            for row in range(1,10):
+            for row in range(1,quant):
                 letter = get_column_letter(col)
+                # print(lista_combinacoes_resultados)
                 ws1[letter + str(row)] = lista_combinacoes_resultados[row-1]
         elif col == 3:
-            for row in range(1,quant+1):
+            for row in range(1,len(sequencia)+1):
                 letter = get_column_letter(col)
                 ws1[letter + str(row)] = sequencia[row-1]
         elif col == 4:
@@ -449,13 +396,11 @@ while True:
 
     #######################TELEGRAM###################################################
 
-    token = '5951270999:AAEPcA790iG3UJilxlVIA-WwFoQRAoSLtuc'
-
     chat_id = last_chat_id(token)
 
     print("Id do chat:",chat_id)
 
-    send_message(token,chat_id,nome_arquivo)
+    # send_message(token,chat_id,nome_arquivo)
     
     print('ROBO FINALIZADO !!!')
         
